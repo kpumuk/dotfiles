@@ -1,0 +1,48 @@
+# ls
+alias ls="ls -GF"
+alias la="ls -a"
+alias ll="ls -lhF"
+alias lla="ll -a"
+
+# df
+alias dfh="df -H"
+alias duh="du -hs"
+
+# rails
+alias sc="script/console"
+alias ss="script/server"
+alias sg="script/generate"
+alias tlog="tail -f log/development.log"
+alias migrate='rake db:migrate && rake db:migrate RAILS_ENV=test'
+alias rst='touch tmp/restart.txt'
+alias s="script/spec -c spec"
+
+# other
+alias m="mate ."
+alias httpdump='sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E "Host\: .*|GET \/.*"'
+alias memflush='echo flush_all | nc localhost 11211'
+alias ann='annotate -p before -i -e tests,fixtures'
+
+# Some Git aliases
+alias ga="git add"
+alias gb="git branch"
+alias gc="git checkout"
+alias gd="git diff"
+alias gci="git commit"
+alias gca="git commit -a"
+alias gg='git log --graph --pretty=format:"%Cred%h%Creset — %s %Cgreen(%cr)%Creset" --abbrev-commit --date=relative'
+alias gl="git pull"
+alias glr="git pull --rebase"
+alias gm="git merge --no-ff"
+alias gmt="git mergetool"
+alias gp="git push"
+alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
+alias gs="git status"
+alias gw="git wtf"
+alias пы="git status"
+alias пыщ="git status"
+
+# Some functions
+function dbq {
+  ssh root@$1 "mysqladmin -uroot processlist -v | grep -v Sleep | grep -v Connect | tail -n +4" | ruby -e '$stdin.each_line { |l| next if l =~ /----/; l.split("|")[1..-1].map(&:strip).zip(["Index", "User", "Host", "Database", "Command", "Time", "State", "Info", "Extra"]).map {|v, k| puts "#{k.rjust(10)}: #{v}" }; puts }'
+}

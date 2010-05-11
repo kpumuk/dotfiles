@@ -1,0 +1,4 @@
+# Bash completition
+if [ -f `brew --prefix`/etc/bash_completion ]; then
+  . $HOMEBREW_PREFIX/etc/bash_completion
+fi

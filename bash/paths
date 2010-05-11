@@ -1,0 +1,2 @@
+export PATH="$HOME/bin:/opt/rubyee/bin:/opt/rubyee/lib/ruby/gems/1.8/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/jruby/bin:$PATH"
+export MANPATH="/opt/homebrew/share/man:$MANPATH"
