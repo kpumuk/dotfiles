@@ -27,6 +27,7 @@ alias ann='annotate -p before -i -e tests,fixtures'
 alias ga="git add"
 alias gb="git branch"
 alias gc="git checkout"
+alias gcb="git checkout -b"
 alias gd="git diff"
 alias gci="git commit"
 alias gca="git commit -a"
