@@ -26,7 +26,7 @@ __bundler_all_gems=
 function __bundler_compute_all_gems {
   if [ -f "${_BUNDLER_GEM_FILE}.lock" ]; then
     __bundler_all_gems=$(ruby -ryaml -e "puts YAML.load_file('${_BUNDLER_GEM_FILE}.lock')['specs'].map(&:keys).flatten")
-  else
+  elif [ -f "${_BUNDLER_GEM_FILE}" ]; then
     if [ -n "${__bundler_all_gems-}" ] && [ "${__bundler_cached_gemfile_path}" == $(pwd) ] && [ "${__bundler_cached_gemfile_mtime}" == $(stat -f %m ${_BUNDLER_GEM_FILE}) ]; then
       return 0
     else
@@ -34,6 +34,10 @@ function __bundler_compute_all_gems {
       __bundler_cached_gemfile_mtime=$(stat -f %m ${_BUNDLER_GEM_FILE})
       __bundler_all_gems=$(bundle show|cut -f2 -d '*'|cut -f2 -d ' ')
     fi
+  else
+    __bundler_cached_gemfile_path=
+    __bundler_cached_gemfile_mtime=
+    __bundler_all_gems=
   fi
 }
 
@@ -41,7 +45,7 @@ __bundler_all_groups=
 function __bundler_compute_all_groups {
   if [ -f "${_BUNDLER_GEM_FILE}.lock" ]; then
     __bundler_all_groups=$(ruby -ryaml -e "puts YAML.load_file('${_BUNDLER_GEM_FILE}.lock')['dependencies'].map{|n,v|v['group']}.flatten.uniq.join(' ')")
-  else
+  elif [ -f "${_BUNDLER_GEM_FILE}" ]; then
     if [ -n "${__bundler_all_groups-}" ] && [ "${__bundler_cached_gemfile_path}" == $(pwd) ] && [ "${__bundler_cached_gemfile_mtime}" == $(stat -f %m ${_BUNDLER_GEM_FILE}) ]; then
       return 0
     else
@@ -49,6 +53,10 @@ function __bundler_compute_all_groups {
       __bundler_cached_gemfile_mtime=$(stat -f %m ${_BUNDLER_GEM_FILE})
       __bundler_all_groups=$(ruby -rconfig/boot -e "puts Bundler.definition.groups")
     fi
+  else
+    __bundler_cached_gemfile_path=
+    __bundler_cached_gemfile_mtime=
+    __bundler_all_gems=
   fi
 }
 
