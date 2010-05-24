@@ -1,3 +1,7 @@
+# Implements Bundler bash completion.
+# Script tries to cache groups and gems list as long as possible,
+# and also uses Gemfile.lock to speedup completions lookup.
+
 _BUNDLER_GEM_FILE=Gemfile
 
 function __bundler_list_all_commands {
@@ -24,40 +28,52 @@ __bundler_cached_gemfile_path=
 __bundler_cached_gemfile_mtime=
 __bundler_all_gems=
 function __bundler_compute_all_gems {
+  local gems
   if [ -f "${_BUNDLER_GEM_FILE}.lock" ]; then
     __bundler_all_gems=$(ruby -ryaml -e "puts YAML.load_file('${_BUNDLER_GEM_FILE}.lock')['specs'].map(&:keys).flatten")
+    return 0
   elif [ -f "${_BUNDLER_GEM_FILE}" ]; then
     if [ -n "${__bundler_all_gems-}" ] && [ "${__bundler_cached_gemfile_path}" == $(pwd) ] && [ "${__bundler_cached_gemfile_mtime}" == $(stat -f %m ${_BUNDLER_GEM_FILE}) ]; then
       return 0
     else
-      __bundler_cached_gemfile_path=$(pwd)
-      __bundler_cached_gemfile_mtime=$(stat -f %m ${_BUNDLER_GEM_FILE})
-      __bundler_all_gems=$(bundle show|cut -f2 -d '*'|cut -f2 -d ' ')
+      gems=$(bundle show 2>/dev/null)
+      if [ $? -eq 0 ]; then
+        __bundler_all_gems=$(echo "$gems"|cut -f2 -d '*'|cut -f2 -d ' ')
+        __bundler_cached_gemfile_path=$(pwd)
+        __bundler_cached_gemfile_mtime=$(stat -f %m ${_BUNDLER_GEM_FILE})
+        return 0
+      fi
     fi
-  else
-    __bundler_cached_gemfile_path=
-    __bundler_cached_gemfile_mtime=
-    __bundler_all_gems=
   fi
+
+  __bundler_all_gems=
+  __bundler_cached_gemfile_path=
+  __bundler_cached_gemfile_mtime=
 }
 
 __bundler_all_groups=
 function __bundler_compute_all_groups {
+  local gems
   if [ -f "${_BUNDLER_GEM_FILE}.lock" ]; then
     __bundler_all_groups=$(ruby -ryaml -e "puts YAML.load_file('${_BUNDLER_GEM_FILE}.lock')['dependencies'].map{|n,v|v['group']}.flatten.uniq.join(' ')")
+    return 0
   elif [ -f "${_BUNDLER_GEM_FILE}" ]; then
     if [ -n "${__bundler_all_groups-}" ] && [ "${__bundler_cached_gemfile_path}" == $(pwd) ] && [ "${__bundler_cached_gemfile_mtime}" == $(stat -f %m ${_BUNDLER_GEM_FILE}) ]; then
       return 0
     else
-      __bundler_cached_gemfile_path=$(pwd)
-      __bundler_cached_gemfile_mtime=$(stat -f %m ${_BUNDLER_GEM_FILE})
-      __bundler_all_groups=$(ruby -rconfig/boot -e "puts Bundler.definition.groups")
+      gems=$(ruby -rconfig/boot -e "puts Bundler.definition.groups" 2>/dev/null)
+      if [ $? -eq 0 ]; then
+        __bundler_all_groups=$gems
+        __bundler_cached_gemfile_path=$(pwd)
+        __bundler_cached_gemfile_mtime=$(stat -f %m ${_BUNDLER_GEM_FILE})
+        return 0
+      fi
     fi
-  else
-    __bundler_cached_gemfile_path=
-    __bundler_cached_gemfile_mtime=
-    __bundler_all_gems=
   fi
+
+  __bundler_all_groups=
+  __bundler_cached_gemfile_path=
+  __bundler_cached_gemfile_mtime=
 }
 
 function _bundler_complete {
