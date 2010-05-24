@@ -1,0 +1,74 @@
+function __loops_list_all_commands {
+  local i IFS=$'\n'
+  loops help|egrep '^    [a-zA-Z0-9]'|cut -f5 -d ' '
+}
+
+__loops_all_commands=
+function __loops_compute_all_commands {
+  : ${__loops_all_commands:=$(__loops_list_all_commands)}
+}
+
+__loops_all_loops=
+function __loops_compute_all_loops {
+  local loops=$(loops list 2>&1|egrep '^  [a-zA-Z0-9]'|cut -f2 -d ':'|cut -f2 -d ' ')
+  if [ $? -eq 0 ]; then
+    __loops_all_loops=$loops
+  else
+    __loops_all_loops=
+  fi
+}
+
+function _loops_complete {
+  local cur prev cmd special opts
+
+  COMPREPLY=()
+  cur=`_get_cword`
+  cmd=${COMP_WORDS[1]}
+  prev=${COMP_WORDS[COMP_CWORD-1]}
+
+  if [ "$COMP_CWORD" -eq 1 ]; then
+    if [[ "$cur" == -* ]]; then
+      opts='-h --help'
+    else
+      __loops_compute_all_commands
+      opts=${__loops_all_commands}
+    fi
+  else
+    case $prev in
+      -c|--config|-p|--pid)
+        _filedir
+        return 0
+        ;;
+      -r|--root)
+        _filedir -d
+        return 0
+        ;;
+      -e|--environment)
+        opts=( $(ls ./config/environments 2>&1) )
+        if [ $? -eq 0 ]; then
+          opts=${opts[@]/\.rb/}
+        else
+          return 0
+        fi
+        ;;
+      -f|--framework)
+        opts='rails merb none'
+        ;;
+      *)
+        if [[ "$cur" == -* ]]; then
+          opts='-c -l -p -r -R -h --config --loops --pid --root --require --help'
+          if [ "$cmd" == 'start' ]; then
+            opts="$opts -d -e -f --daemonize --environment --framework"
+          fi
+        elif [ "$cmd" == 'start' ] || [ "$cmd" == 'debug' ]; then
+          __loops_compute_all_loops
+          opts=${__loops_all_loops}
+        fi
+        ;;
+    esac
+  fi
+
+  COMPREPLY=( $( compgen -W "$opts" -- "$cur" ) )
+}
+
+complete -F _loops_complete loops
