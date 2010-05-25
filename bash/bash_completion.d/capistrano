@@ -59,6 +59,7 @@ function _capistrano_complete {
       ;;
   esac
 
+  COMP_WORDBREAKS=${COMP_WORDBREAKS//:}
   COMPREPLY=( $(compgen -W "$opts" -- $cur) )
 }
 

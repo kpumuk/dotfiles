@@ -1,0 +1,71 @@
+function __rake_list_all_opts {
+  local i IFS=$'\n'
+  rake -h|egrep '^    '|awk '{print $1 "\n" $2}'|egrep '^-'
+}
+
+__rake_all_opts=
+function __rake_compute_all_opts {
+  : ${__rake_all_opts:=$(__rake_list_all_opts)}
+}
+
+__rake_all_tasks=
+__rake_cached_rakefile_path=
+__rake_cached_rakefile_mtime=
+function __rake_compute_all_tasks {
+  local tasks
+  if [ -f "Rakefile" ]; then
+    if [ -n "${__rake_all_tasks-}" ] && [ "${__rake_cached_rakefile_path}" == $(pwd) ] && [ "${__rake_cached_rakefile_mtime}" == $(stat -f %m Rakefile) ]; then
+      return 0
+    else
+      tasks=$(rake -T 2>/dev/null)
+      if [ $? -eq 0 ]; then
+        __rake_all_tasks=$(echo "$tasks"|egrep '^rake '|cut -f2 -d ' ')
+        __rake_cached_rakefile_path=$(pwd)
+        __rake_cached_rakefile_mtime=$(stat -f %m Rakefile)
+        return 0
+      fi
+    fi
+  fi
+
+  __rake_all_tasks=
+  __rake_cached_rakefile_path=
+  __rake_cached_rakefile_mtime=
+}
+
+function _rake_complete {
+  local cur prev opts
+
+  COMPREPLY=()
+  cur=`_get_cword`
+  prev=${COMP_WORDS[COMP_CWORD-1]}
+
+  case $prev in
+    -f|--rakefile)
+      _filedir
+      return 0
+      ;;
+    -R|--rakelibdir)
+      _filedir -d
+      return 0
+      ;;
+    -D|--describe)
+      __rake_compute_all_tasks
+      opts=${__rake_all_tasks}
+      ;;
+    *)
+      if [[ "$cur" == -* ]]; then
+        __rake_compute_all_opts
+        opts=${__rake_all_opts}
+      else
+        __rake_compute_all_tasks
+        opts=${__rake_all_tasks}
+      fi
+      ;;
+  esac
+
+  COMP_WORDBREAKS=${COMP_WORDBREAKS//:}
+  COMPREPLY=( $(compgen -W "$opts" -- $cur) )
+}
+
+
+complete -F _rake_complete rake
