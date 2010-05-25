@@ -8,7 +8,7 @@ end
 # IRB settings
 require 'irb/completion'
 require 'irb/ext/save-history'
-IRB.conf[:AUTO_INDENT] = true
+IRB.conf[:AUTO_INDENT] = false
 IRB.conf[:USE_READLINE] = true
 IRB.conf[:SAVE_HISTORY] = 1000
 IRB.conf[:HISTORY_FILE] = "#{ENV['HOME']}/.irb_history"
@@ -36,14 +36,14 @@ begin
     end
   end
 rescue LoadError
-  puts 'AwesomePrint gem not available: sudo gem install awesome_print'
+  puts 'AwesomePrint gem not available: `gem install awesome_print`'
 end
 
 # Looksee gem
 begin
   require 'looksee/shortcuts'
 rescue LoadError
-  puts 'Looksee gem not available: sudo gem install looksee'
+  puts 'Looksee gem not available: `gem install looksee`'
 end
 
 # Easily print methods local to an object's class
