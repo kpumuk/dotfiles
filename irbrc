@@ -1,3 +1,4 @@
+# encoding: utf-8
 begin
   # Load rubygems and some helpful gems
   require 'rubygems'
@@ -8,10 +9,24 @@ end
 # IRB settings
 require 'irb/completion'
 require 'irb/ext/save-history'
-IRB.conf[:AUTO_INDENT] = false
+IRB.conf[:AUTO_INDENT]  = true
 IRB.conf[:USE_READLINE] = true
 IRB.conf[:SAVE_HISTORY] = 1000
 IRB.conf[:HISTORY_FILE] = "#{ENV['HOME']}/.irb_history"
+
+# colorize prompt
+IRB.conf[:PROMPT][:CUSTOM] = {
+  # Do not use coloring for prompts because of weird bug in cursor positioning in IRB.
+  # \001 and \002 are special characters prcessed by readline, so the substring between them
+  # will not be counted in prompt length calculation.
+  # http://www.tek-tips.com/viewthread.cfm?qid=1560209&page=20
+  :PROMPT_I => "\001\e[0;36m\002>> \001\e[0m\002",
+  :PROMPT_S => "\001\e[0;32m\002>> \001\e[0m\002",
+  :PROMPT_C => "\001\e[0;36m\002.. \001\e[0m\002",
+  :PROMPT_N => "\001\e[0;36m\002.. \001\e[0m\002",
+  :RETURN   => "\e[1;31m\342\206\222\e[0m %s\n"
+}
+IRB.conf[:PROMPT_MODE] = :CUSTOM
 
 # pretty print
 require 'pp'
@@ -19,16 +34,6 @@ require 'pp'
 # awesome print
 begin
   require 'ap'
-
-  # colorize prompt
-  IRB.conf[:PROMPT][:CUSTOM] = {
-    :PROMPT_I => '>> '.cyanish,
-    :PROMPT_S => '>> '.greenish,
-    :PROMPT_C => "#{'..'.cyanish} ",
-    :PROMPT_N => "#{'..'.cyanish} ",
-    :RETURN   => "#{'→'.red} %s\n"
-  }
-  IRB.conf[:PROMPT_MODE] = :CUSTOM
 
   IRB::Irb.class_eval do
     def output_value
