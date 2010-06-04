@@ -1,4 +1,4 @@
-export LANG=ru_RU.UTF-8
+export LANG=en_US.UTF-8
 export QTDIR=/opt/local/lib/qt3
 
 # Setup some environment variables
