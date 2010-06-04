@@ -8,7 +8,7 @@ if [ "$HOMEBREW_HOME" != "" ]; then
   _brew_cellar_sbin_dir=
   _brew_cellar_man_dir=
   function _brew_cellar_dirs_for {
-    local dir=$(dirname `readlink /opt/homebrew/bin/$1` 2>&1)
+    local dir=$(dirname `readlink /opt/homebrew/bin/$1` 2>/dev/null)
     if [ "$?" -eq 0 ]; then
       _brew_cellar_bin_dir=${dir/#../$HOMEBREW_HOME}
       _brew_cellar_sbin_dir=${_brew_cellar_bin_dir/%bin/sbin}
@@ -26,9 +26,9 @@ if [ "$HOMEBREW_HOME" != "" ]; then
 
   function _brew_add_path_for {
     _brew_cellar_dirs_for $1
-    [[ "${_brew_cellar_bin_dir}" != "" ]]  && export PATH="$PATH:${_brew_cellar_bin_dir}"
-    [[ "${_brew_cellar_sbin_dir}" != "" ]] && export PATH="$PATH:${_brew_cellar_sbin_dir}"
-    [[ "${_brew_cellar_man_dir}" != "" ]]  && export MANPATH="$MANPATH:${_brew_cellar_man_dir}"
+    [ -n "${_brew_cellar_bin_dir}"  ] && export PATH="$PATH:${_brew_cellar_bin_dir}"
+    [ -n "${_brew_cellar_sbin_dir}" ] && export PATH="$PATH:${_brew_cellar_sbin_dir}"
+    [ -n "${_brew_cellar_man_dir}"  ] && export MANPATH="$MANPATH:${_brew_cellar_man_dir}"
   }
 
   export PATH="$HOMEBREW_HOME/bin:$HOMEBREW_HOME/sbin:$PATH"
