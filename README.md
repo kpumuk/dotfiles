@@ -1,5 +1,5 @@
-Dmytro Shteflyuk Dot Files
-==========================
+Dot files used by Dmytro Shteflyuk & Alexey Kovyrin
+===================================================
 
 This package contains a set of my startup scripts, configuration
 files to setup a system the way I like it.
