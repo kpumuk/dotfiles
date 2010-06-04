@@ -19,7 +19,7 @@ package:
 2. Install bash and git from Homebrew. This is necessary because
    the bash version in Max OS X really outdated.
 
-        brew install bash git
+        brew install git bash bash-completion
 
 Now you are ready to go:
 
