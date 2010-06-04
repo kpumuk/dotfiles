@@ -1,20 +1,27 @@
 function dotfilesupdate {
   local basedir=$(dirname "`readlink ~/.bashrc`")
-  
+
   (
     cd "$basedir"
     if [ ! -d '.git' ]; then
-      git init &&
-      git remote add --fetch origin git://github.com/kpumuk/dotfiles.git &&
-      git branch --track master origin/master &&
-      git reset
+      (
+        git init &&
+        git remote add --fetch origin git://github.com/kpumuk/dotfiles.git &&
+        git branch --track master origin/master &&
+        git reset
+      ) || exit $?
     fi
 
     if [ `gem list -i git-up` == 'true' ]; then
-      git up
+      git up || exit $?
     else
-      git pull --rebase
+      (
+        git stash &&
+        git pull --rebase1 &&
+        git stash pop
+      ) || exit $?
     fi
+
     rake install
   )
 }
