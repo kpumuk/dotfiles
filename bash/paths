@@ -1,2 +1,40 @@
-export PATH="$HOME/bin:/opt/rubyee/bin:/opt/rubyee/lib/ruby/gems/1.8/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/opt/jruby/bin:$PATH"
-export MANPATH="/opt/homebrew/share/man:$MANPATH"
+HOMEBREW_HOME=/opt/homebrew
+[[ ! -x "$HOMEBREW_HOME/bin/brew" ]] && HOMEBREW_HOME=/usr/local
+[[ ! -x "$HOMEBREW_HOME/bin/brew" ]] && HOMEBREW_HOME=/opt/local
+[[ ! -x "$HOMEBREW_HOME/bin/brew" ]] && HOMEBREW_HOME=
+
+if [ "$HOMEBREW_HOME" != "" ]; then
+  _brew_cellar_bin_dir=
+  _brew_cellar_sbin_dir=
+  _brew_cellar_man_dir=
+  function _brew_cellar_dirs_for {
+    local dir=$(dirname `readlink /opt/homebrew/bin/$1` 2>&1)
+    if [ "$?" -eq 0 ]; then
+      _brew_cellar_bin_dir=${dir/#../$HOMEBREW_HOME}
+      _brew_cellar_sbin_dir=${_brew_cellar_bin_dir/%bin/sbin}
+      _brew_cellar_man_dir=${_brew_cellar_bin_dir/%bin/share\/man}
+
+      [[ ! -d "${_brew_cellar_bin_dir=}" ]]  && _brew_cellar_bin_dir=
+      [[ ! -d "${_brew_cellar_sbin_dir=}" ]] && _brew_cellar_sbin_dir=
+      [[ ! -d "${_brew_cellar_man_dir=}" ]]  && _brew_cellar_man_dir=
+    else
+      _brew_cellar_bin_dir=
+      _brew_cellar_sbin_dir=
+      _brew_cellar_man_dir=
+    fi
+  }
+
+  function _brew_add_path_for {
+    _brew_cellar_dirs_for $1
+    [[ "${_brew_cellar_bin_dir}" != "" ]]  && export PATH="$PATH:${_brew_cellar_bin_dir}"
+    [[ "${_brew_cellar_sbin_dir}" != "" ]] && export PATH="$PATH:${_brew_cellar_sbin_dir}"
+    [[ "${_brew_cellar_man_dir}" != "" ]]  && export MANPATH="$MANPATH:${_brew_cellar_man_dir}"
+  }
+
+  export PATH="$HOMEBREW_HOME/bin:$HOMEBREW_HOME/sbin:$PATH"
+  export MANPATH="$HOMEBREW_HOME/share/man:$MANPATH"
+
+  _brew_add_path_for 'node'
+fi
+
+export PATH="$HOME/bin:$HOME/.bash/bin:$PATH"

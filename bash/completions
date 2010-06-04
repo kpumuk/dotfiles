@@ -1,6 +1,6 @@
 # Bash completition
-if [ -f `brew --prefix`/etc/bash_completion ]; then
-  . $HOMEBREW_PREFIX/etc/bash_completion
+if [ "$HOMEBREW_HOME" != "" ] && [ -f $HOMEBREW_HOME/etc/bash_completion ]; then
+  . $HOMEBREW_HOME/etc/bash_completion
 fi
 
 # Git aliases completition

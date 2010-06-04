@@ -3,7 +3,7 @@ begin
   # Load rubygems and some helpful gems
   require 'rubygems'
 rescue LoadError
-  abort "Rubygems not available!"
+  abort 'Rubygems not available!'
 end
 
 # IRB settings
@@ -73,7 +73,7 @@ module Kernel
   def copy_history
     history = Readline::HISTORY.entries
     index = history.rindex("exit") || -1
-    content = history[(index+1)..-2].join("\n")
+    content = history[(index + 1)..-2].join("\n")
     puts content
     copy content
   end
@@ -84,3 +84,4 @@ if ENV.include?('RAILS_ENV') && !Object.const_defined?('RAILS_DEFAULT_LOGGER')
   require 'logger'
   RAILS_DEFAULT_LOGGER = Logger.new(STDOUT)
 end
+

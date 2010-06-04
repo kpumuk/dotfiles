@@ -11,14 +11,16 @@ export RUBY_HEAP_MIN_SLOTS=500000
 export RUBY_HEAP_SLOTS_INCREMENT=250000
 export RUBY_HEAP_SLOTS_GROWTH_FACTOR=1
 export RUBY_GC_MALLOC_LIMIT=50000000
-export GEM_HOME=/opt/rubyee/lib/ruby/gems/1.8
-export GEM_PATH=$GEM_HOME
+# export GEM_HOME=/opt/rubyee/lib/ruby/gems/1.8
+# export GEM_PATH=$GEM_HOME
 
 # Go settings
-export GOROOT=`brew --cellar`/go/HEAD
-export GOBIN=$GOROOT/bin
-export GOARCH=amd64
-export GOOS=darwin
+if [ -d "$HOMEBREW_HOME/Cellar/go/HEAD" ]; then
+  export GOROOT=`brew --cellar`/go/HEAD
+  export GOBIN=$GOROOT/bin
+  export GOARCH=amd64
+  export GOOS=darwin
+fi
 
 # Some Java variables
 # export JAVA_HOME='/System/Library/Frameworks/JavaVM.framework/Home'
