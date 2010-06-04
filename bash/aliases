@@ -43,8 +43,3 @@ alias gu="git up"
 alias gw="git wtf"
 alias пы="git status"
 alias пыщ="git status"
-
-# Some functions
-function dbq {
-  ssh root@$1 "mysqladmin -uroot processlist -v | grep -v Sleep | grep -v Connect | tail -n +4" | ruby -e '$stdin.each_line { |l| next if l =~ /----/; l.split("|")[1..-1].map(&:strip).zip(["Index", "User", "Host", "Database", "Command", "Time", "State", "Info", "Extra"]).map {|v, k| puts "#{k.rjust(10)}: #{v}" }; puts }'
-}
