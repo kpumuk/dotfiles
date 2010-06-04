@@ -1,37 +1,3 @@
-# Show the exit code of the last command.
-function __last_exit_code() {
-  local code=$?
-  if [ $code = 0 ]; then
-    printf "$1" $code
-  else
-    printf "$2" $code
-  fi
-  return $code
-}
-
-# Show the bundler project name.
-function __bundler_ps1 {
-  local retval=$?
-  if [ -n "${BUNDLE_GEMFILE-}" ]; then
-    project_path="${BUNDLE_GEMFILE%/Gemfile}"
-    project_name="${project_path##**/}"
-
-    if [ -n "${1-}" ]; then
-      printf "$1" "${project_name}"
-    else
-      printf " (%s)" "${project_name}"
-    fi
-  fi
-  return $retval
-}
-
-# Show lots of info in the __git_ps1 output.
-export GIT_PS1_SHOWDIRTYSTATE="true"
-export GIT_PS1_SHOWSTASHSTATE="true"
-export GIT_PS1_SHOWUNTRACKEDFILES="true"
-# Bash prompt
-export PS1='\[\e[36m\]$(__bundler_ps1 "[%s] ")\[\e[0m\]\w $(__last_exit_code "\[\033[1;32m\]%s\[\033[00m\]" "\[\033[01;31m\]%s\[\033[00m\]")$(__git_ps1 " (\[\e[0;32m\]%s\[\e[0m\])")$ '
-
 export LANG=ru_RU.UTF-8
 export QTDIR=/opt/local/lib/qt3
 
