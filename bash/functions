@@ -17,7 +17,7 @@ function dotfilesupdate {
     else
       (
         git stash &&
-        git pull --rebase1 &&
+        git pull --rebase &&
         git stash pop
       ) || exit $?
     fi
