@@ -1,6 +1,12 @@
 # Bash completition
-if [ "$HOMEBREW_HOME" != "" ] && [ -f $HOMEBREW_HOME/etc/bash_completion ]; then
-  . $HOMEBREW_HOME/etc/bash_completion
+if [ -n "$HOMEBREW_HOME" ]; then
+  if [ -f $HOMEBREW_HOME/etc/bash_completion ]; then
+    source $HOMEBREW_HOME/etc/bash_completion
+  else
+    _cecho_warning
+    echo 'Bash completion is not installed in your system'
+    echo -e "Please install it with '${ansi_cyan}brew install bash-completion${ansi_reset}'"
+  fi
 fi
 
 # Git aliases completition
@@ -25,5 +31,5 @@ for cmd in 'ga gb gc gcb gd gci gca gl glr gm gmt gp'; do
 done
 
 for i in ~/.bash/bash_completion.d/*; do
-  . $i
+  source $i
 done

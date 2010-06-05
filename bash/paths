@@ -3,38 +3,38 @@ HOMEBREW_HOME=/opt/homebrew
 [[ ! -x "$HOMEBREW_HOME/bin/brew" ]] && HOMEBREW_HOME=/opt/local
 [[ ! -x "$HOMEBREW_HOME/bin/brew" ]] && HOMEBREW_HOME=
 
-if [ "$HOMEBREW_HOME" != "" ]; then
-  _brew_cellar_bin_dir=
-  _brew_cellar_sbin_dir=
-  _brew_cellar_man_dir=
-  function _brew_cellar_dirs_for {
+if [ -n "$HOMEBREW_HOME" ]; then
+  _brew_cellar_dir=
+  function _brew_cellar_dir_for {
     local dir=$(dirname `readlink /opt/homebrew/bin/$1` 2>/dev/null)
     if [ "$?" -eq 0 ]; then
-      _brew_cellar_bin_dir=${dir/#../$HOMEBREW_HOME}
-      _brew_cellar_sbin_dir=${_brew_cellar_bin_dir/%bin/sbin}
-      _brew_cellar_man_dir=${_brew_cellar_bin_dir/%bin/share\/man}
+      _brew_cellar_dir=${dir/#../$HOMEBREW_HOME}
+      _brew_cellar_dir=${_brew_cellar_dir/%bin/}
 
-      [[ ! -d "${_brew_cellar_bin_dir=}" ]]  && _brew_cellar_bin_dir=
-      [[ ! -d "${_brew_cellar_sbin_dir=}" ]] && _brew_cellar_sbin_dir=
-      [[ ! -d "${_brew_cellar_man_dir=}" ]]  && _brew_cellar_man_dir=
+      [ ! -d "${_brew_cellar_dir}"  ] && _brew_cellar_dir=
     else
-      _brew_cellar_bin_dir=
-      _brew_cellar_sbin_dir=
-      _brew_cellar_man_dir=
+      _brew_cellar_dir=
     fi
   }
 
   function _brew_add_path_for {
-    _brew_cellar_dirs_for $1
-    [ -n "${_brew_cellar_bin_dir}"  ] && export PATH="$PATH:${_brew_cellar_bin_dir}"
-    [ -n "${_brew_cellar_sbin_dir}" ] && export PATH="$PATH:${_brew_cellar_sbin_dir}"
-    [ -n "${_brew_cellar_man_dir}"  ] && export MANPATH="$MANPATH:${_brew_cellar_man_dir}"
+    _brew_cellar_dir_for $1
+    if [ -n "${_brew_cellar_dir}" ]; then
+      [ -d "${_brew_cellar_dir}bin"        ] && export PATH="$PATH:${_brew_cellar_dir}bin"
+      [ -d "${_brew_cellar_dir}sbin"       ] && export PATH="$PATH:${_brew_cellar_dir}sbin"
+      [ -d "${_brew_cellar_dir}share/man"  ] && export MANPATH="$MANPATH:${_brew_cellar_dir}share/man"
+    fi
   }
 
   export PATH="$HOMEBREW_HOME/bin:$HOMEBREW_HOME/sbin:$PATH"
   export MANPATH="$HOMEBREW_HOME/share/man:$MANPATH"
 
   _brew_add_path_for 'node'
+else
+  _cecho_warning
+  echo 'Homebrew is not installed in your system'
+  echo -e "Please install it with '${ansi_cyan}dotfiles install homebrew [destination]${ansi_reset}'"
+  echo -e "Run '${ansi_cyan}dotfiles help install${ansi_reset}' for details"
 fi
 
 export PATH="$HOME/bin:$HOME/.bash/bin:$PATH"
