@@ -30,10 +30,12 @@ function _dotfiles_update {
                    git reset"
   fi
 
+  local stash_save stash_pop
+  local output=`git status -s 2>/dev/null`
+  [ -n "$output" ] && stash_save="git stash save && " stash_pop=" && git stash pop"
   _safe_execute "Fetching latest dotfiles scripts" \
-                "git stash &&
-                 git pull --rebase &&
-                 git stash pop"
+                "${stash_save} git fetch &&
+                 git rebase origin/master ${stash_pop}"
 
   _safe_execute "Installing dotfiles" \
                 "rake install"
@@ -53,7 +55,11 @@ function _safe_execute {
 
   if [ "$retval" -ne 0 ]; then
     _cecho_fail
-    echo -e $cmd
+    echo
+    echo "Command:"
+    echo -e "$cmd"
+    echo
+    echo "Output:"
     echo -e $output
     [ "$critical" == "true" ] && exit $retval
   else
