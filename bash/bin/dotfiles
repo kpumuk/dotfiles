@@ -1,0 +1,273 @@
+#!/usr/bin/env bash
+
+DOTFILES_BASEDIR=$(dirname "`readlink ~/.bashrc`")
+source $HOME/.bash/colors
+
+# Column to print status message at
+CECHO_LINE_WIDTH=79
+function _echo_with_spacer {
+  printf "%-${CECHO_LINE_WIDTH}s" "$1"
+}
+
+function _cecho_ok {
+  echo -e "[   ${ansi_green}OK${ansi_reset}   ]"
+}
+
+function _cecho_fail {
+  echo -e "[ ${ansi_red}FAILED${ansi_reset} ]"
+}
+
+function _dotfiles_update {
+  cd "$DOTFILES_BASEDIR"
+
+  echo "Updating dotfiles"
+
+  if [ ! -d '.git' ]; then
+    _safe_execute "Initializing git repository" \
+                  "git init &&
+                   git remote add --fetch origin git://github.com/kpumuk/dotfiles.git &&
+                   git branch --track master origin/master &&
+                   git reset"
+  fi
+
+  _safe_execute "Fetching latest dotfiles scripts" \
+                "git stash &&
+                 git pull --rebase &&
+                 git stash pop"
+
+  _safe_execute "Installing dotfiles" \
+                "rake install"
+}
+
+function _safe_execute {
+  local msg="$1" cmd="$2" critical="${3:-true}" sudo="${4:-false}" output retval
+
+  _echo_with_spacer " * $msg"
+  if [ "$sudo" == "true" ]; then
+    sudo="sudo"
+  else
+    sudo=""
+  fi
+  output=$($sudo bash -c "$cmd" 2>&1)
+  retval=$?
+
+  if [ "$retval" -ne 0 ]; then
+    _cecho_fail
+    echo -e $cmd
+    echo -e $output
+    [ "$critical" == "true" ] && exit $retval
+  else
+    _cecho_ok
+  fi
+
+  return $retval
+}
+
+function _dotfiles_install_rvm {
+  local output msg
+
+  echo 'Installing RVM'
+
+  _safe_execute "Running RVM install scripts" \
+                "bash < <( curl http://rvm.beginrescueend.com/releases/rvm-install-head )"
+
+  _safe_execute "Configuring system" \
+                "source $HOME/.rvm/scripts/rvm"
+
+  _safe_execute "Installing Ruby Enterprise Edition (REE)" \
+                "rvm install ree"
+
+  _safe_execute "Configuring REE as as system default Ruby" \
+                "rvm use ree --default"
+
+  _dotfiles_install_gems
+
+  echo 'RVM installed successully'
+}
+
+function _dotfiles_install_homebrew {
+  local dir=${1:-${HOMEBREW_HOME:-/opt/homebrew}}
+
+  echo "Installing homebrew to ${dir}"
+
+  if [ -z "$HOMEBREW_HOME" ] && [ ! -x "$dir/bin/brew" ]; then
+    _safe_execute "Creating destination folder" \
+                  "mkdir -p '$dir'"
+
+    _safe_execute "Changing folder ownership" \
+                  "sudo chown -R $USER '$dir'"
+
+    _safe_execute "Running Homebrew install scripts" \
+                  "curl -Lsf http://github.com/mxcl/homebrew/tarball/master |
+                   tar xvz "-C$dir" --strip 1"
+  fi
+
+  _dotfiles_install_formulas "$dir"
+
+  echo 'Homebrew installed successully, please restart your console'
+}
+
+function _dotfiles_install_formulas {
+  local dir=${1:-${HOMEBREW_HOME:-/opt/homebrew}}
+
+  echo 'Installing default Homebrew formulas'
+
+  for formula in readline git bash bash-completion ack wget; do
+    _safe_execute "Installing formula: $formula" \
+                  "$dir/bin/brew install $formula" \
+                  false
+  done
+}
+
+function _dotfiles_install_gems {
+  echo 'Installing default gems'
+
+  _safe_execute "Switching to @global gemset" \
+                "rvm gemset use @global"
+
+  for gem in awesome_print bundler looksee memcached mysql ruby-debug ruby-debug-ide; do
+    _safe_execute "Installing gem: $gem" \
+                  "gem install $gem --no-rdoc --no-ri" \
+                  false
+  done
+
+  _safe_execute "Switching back to default gemset" \
+                "rvm gemset use --default"
+}
+
+function _dotfiles_install_passenger {
+  echo 'Installing passenger'
+
+  _safe_execute "Installing 'passenger' gem" \
+                "gem install passenger --no-rdoc --no-ri"
+
+  _safe_execute "Building passenger apache2 module" \
+                "passenger-install-apache2-module -a"
+
+  echo "Configuring Apache"
+
+  local root=`passenger-config --root` ruby=`which ruby`
+
+  cat /etc/apache2/httpd.conf | grep "^PassengerRoot" >/dev/null 2>&1
+  if [ "$?" -ne 0 ]; then
+    [ -s "/etc/apache2/other/passenger.conf" ] && sudo cp /etc/apache2/other/passenger.conf /etc/apache2/other/passenger.conf~orig
+    _safe_execute "Adding passenger configuraton to /etc/apache2/other/passenger.conf" \
+                  "mkdir -p /etc/apache2/other &&
+                   echo \"LoadModule passenger_module ${root}/ext/apache2/mod_passenger.so\" > /etc/apache2/other/passenger.conf &&
+                   echo \"PassengerRoot ${root}\" >> /etc/apache2/other/passenger.conf &&
+                   echo \"PassengerRuby ${ruby}\" >> /etc/apache2/other/passenger.conf" \
+                   true \
+                   true
+  else
+    sudo cp /etc/apache2/httpd.conf /etc/apache2/httpd.conf~orig
+    _safe_execute "Updating passenger configuraton in /etc/apache2/httpd.conf" \
+                  "cat /etc/apache2/httpd.conf~orig |
+                   sed 's#^\(LoadModule passenger_module \).*\$#\1${root}/ext/apache2/mod_passenger.so#' |
+                   sed 's#^\(PassengerRoot \).*\$#\1${root}#' |
+                   sed 's#^\(PassengerRuby \).*\$#\1${ruby}#' > /etc/apache2/httpd.conf" \
+                  true \
+                  true
+  fi
+
+  _safe_execute "Restarting Apache" \
+                "sudo apachectl restart"
+}
+
+function _help_summary {
+  echo "Tasks:"
+  echo "  dotfiles install homebrew [DEST]  # Install Homebrew to the specified folder (/opt/homebrew by default)"
+  echo "  dotfiles install formulas         # Install needed formulas"
+  echo "  dotfiles install rvm              # Install RVM and some gems"
+  echo "  dotfiles install gems             # Install default gems"
+  echo "  dotfiles install passenger        # Install passenger and configure Apache to use it"
+  echo "  dotfiles help [COMMAND]           # Show help for command"
+  echo "  dotfiles update                   # Update dotfiles scripts"
+}
+
+function _help_install {
+  echo "Usage:"
+  echo "  dotfiles install homebrew [DEST]"
+  echo
+  echo "Install Homebrew to the specified folder (by default /opt/homebrew)."
+  echo "After that it installs some formulas (see 'dotfiles install formulas')."
+  echo '-----'
+  echo
+  echo "Usage:"
+  echo "  dotfiles install formulas"
+  echo
+  echo "Install Homebrew formulas needed by some of dotfiles scripts:"
+  echo "  readline, git, bash, bash-completion, ack, wget"
+  echo '-----'
+  echo
+  echo "Usage:"
+  echo "  dotfiles install rvm"
+  echo
+  echo "Install RVM, Ruby Enterprise Edition, and make it the default system Ruby."
+  echo "Also install some gems (see 'dotfiles install gems') to the @global gemset."
+  echo '-----'
+  echo
+  echo "Usage:"
+  echo "  dotfiles install gems"
+  echo
+  echo "Install Ruby gems need by dotfiles scripts to the @global gemset:"
+  echo "  awesome_print bundler looksee memcached mysql ruby-debug ruby-debug-ide"
+  echo '-----'
+  echo
+  echo "Usage:"
+  echo "  dotfiles install passenger"
+  echo
+  echo "Install Passenger gem and configure system Apache to use it. If no"
+  echo "previous installation was configured in /etc/apache2/http.conf, it"
+  echo "creates a new file /etc/apache2/other/passenger.conf, where the Passenger"
+  echo "configuration goes. Otherwise it replaces current Passenger config in"
+  echo "the http.conf file (after making the backup in http.conf~orig)"
+}
+
+function _help_update {
+  echo "Usage:"
+  echo "  dotfiles update"
+  echo
+  echo "Update dotfiles scripts from the main GitHub repository."
+}
+
+case $1 in
+  update)
+    _dotfiles_update
+    ;;
+  help)
+    if [ -n "$2" ]; then
+      (type _help_$2 2>/dev/null | grep -q 'is a function' >/dev/null 2>&1)
+      if [ "$?" -eq 0 ]; then
+        _help_$2
+      else
+        _help_summary
+      fi
+    else
+      _help_summary
+    fi
+    ;;
+  install|setup)
+    case $2 in
+      rvm)
+        _dotfiles_install_rvm
+        ;;
+      homebrew|brew)
+        _dotfiles_install_homebrew $3
+        ;;
+      gems)
+        _dotfiles_install_gems $3
+        ;;
+      formula|formulas)
+        _dotfiles_install_formulas $3
+        ;;
+      passenger)
+        _dotfiles_install_passenger
+        ;;
+      *)
+        _help_install
+        ;;
+    esac
+    ;;
+  *)
+    _help_summary
+esac
