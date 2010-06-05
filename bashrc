@@ -1,3 +1,5 @@
+# ANSI color helpers
+source $HOME/.bash/colors
 # Set the PATH variable value
 source $HOME/.bash/paths
 # Various system-wide environemnt variables
