@@ -14,4 +14,6 @@ source $HOME/.bash/completions
 source $HOME/.bash/prompt
 
 # Machine specific settings
-[[ -s $HOME/.localrc ]] && source $HOME/.localrc
+if [ -s "$HOME/.localrc" ]; then
+  source $HOME/.localrc
+fi
