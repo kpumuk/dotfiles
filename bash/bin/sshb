@@ -3,7 +3,7 @@
 # SSH with host name and IP address in background (only in iTerm.app)
 
 # First, check to see if we have the correct terminal!
-if [ "$(tty)" == 'not a tty' ] ; then
+if [ "$(tty)" == 'not a tty' ] || [ "$TERM_PROGRAM" != "iTerm.app" ] ; then
   /usr/bin/ssh "$@"
   exit $?
 fi
