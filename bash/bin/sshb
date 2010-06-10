@@ -1,0 +1,52 @@
+#!/bin/bash
+
+# SSH with host name and IP address in background
+
+BG_COLOR="#000000"       # Background color
+FG_COLOR="#662020"       # Foreground color
+DIMENSIONS="970x456"     # Console dimensions
+GRAVITY="NorthEast"      # Text gravity (NorthWest, North, NorthEast,
+                         # West, Center, East, SouthWest, South, SouthEast)
+OFFSET1="20,10"          # Text offset
+OFFSET2="20,80"          # Text offset
+FONT_SIZE="60"           # Font size in points
+FONT_STYLE="Normal"      # Font style (Any, Italic, Normal, Oblique)
+# Font path
+FONT="$HOME/.bash/resources/SimpleLife.ttf"
+
+HOSTNAME=`echo $@ | sed "s/.*@//" | sed "s/ .*//"`
+
+# RESOLVED_HOSTNAME=`nslookup $HOSTNAME|tail -n +4|grep '^Name:'|cut -f2 -d $'\t'`
+# RESOLVED_IP=`nslookup $HOSTNAME|tail -n +4|grep '^Address:'|cut -f2 -d $':'|tail -c +2`
+output=`dscacheutil -q host -a name $HOSTNAME`
+RESOLVED_HOSTNAME=`echo -e "$output"|grep '^name:'|cut -f2 -d ':'|tail -c +2`
+RESOLVED_IP=`echo -e "$output"|grep '^ip_address:'|cut -f2 -d ':'|tail -c +2`
+
+set_bg () {
+  osascript -e "tell application \"iTerm\"
+    set current_terminal to (current terminal)
+    tell current_terminal
+      set current_session to (current session)
+      tell current_session
+        set background image path to \"$1\"
+      end tell
+    end tell
+  end tell"
+}
+
+on_exit () {
+  if [ ! -f /tmp/iTermBG.empty.png ]; then
+    convert -size "$DIMENSIONS" xc:"$BG_COLOR" "/tmp/iTermBG.empty.png"
+  fi
+  set_bg "/tmp/iTermBG.empty.png"
+  rm "/tmp/iTermBG.$$.png"
+}
+trap on_exit EXIT
+
+convert \
+  -size "$DIMENSIONS" xc:"$BG_COLOR" -gravity "$GRAVITY" -fill "$FG_COLOR" -font "$FONT" -style "$FONT_STYLE" -pointsize "$FONT_SIZE" -antialias -draw "text $OFFSET1 '${RESOLVED_HOSTNAME:-$HOSTNAME}'" \
+  -pointsize 30 -draw "text $OFFSET2 '${RESOLVED_IP:-}'" \
+  "/tmp/iTermBG.$$.png"
+set_bg "/tmp/iTermBG.$$.png"
+
+/usr/bin/ssh "$@"

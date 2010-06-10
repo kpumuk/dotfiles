@@ -39,7 +39,7 @@ IRB.conf[:PROMPT][:DOTFILES] = {
 if Readline::VERSION == 'EditLine wrapper'
   puts "\e[31mWARNING\e[0m: You ruby built with \e[35meditline\e[0m, instead of \e[35mreadline\e[0m, so it does not support" +
     "Unicode and ANSI chars in prompt.\n" +
-    "Please re-build your Ruby with readline support:
+    "Please re-build your Ruby with readline support (see http://bit.ly/dxQmvQ for details):
     \e[90mrvm install ree -C --with-readline-dir=/opt/homebrew/Cellar/readline/6.0\e[0m"
   IRB.conf[:PROMPT][:DOTFILES].each do |k, v|
     IRB.conf[:PROMPT][:DOTFILES][k] = v.gsub(%r{\001[^\002]*\002}, '')
