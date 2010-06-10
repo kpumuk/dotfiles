@@ -35,13 +35,13 @@ FONT_STYLE="Normal"      # Font style (Any, Italic, Normal, Oblique)
 # Font path
 FONT="$HOME/.bash/resources/SimpleLife.ttf"
 
-HOSTNAME=`echo $@ | sed "s/.*@//" | sed "s/ .*//"`
+HOSTNAME=`echo $@ | sed -e "s/.*@//" -e "s/ .*//"`
 
 # RESOLVED_HOSTNAME=`nslookup $HOSTNAME|tail -n +4|grep '^Name:'|cut -f2 -d $'\t'`
 # RESOLVED_IP=`nslookup $HOSTNAME|tail -n +4|grep '^Address:'|cut -f2 -d $':'|tail -c +2`
 output=`dscacheutil -q host -a name $HOSTNAME`
-RESOLVED_HOSTNAME=`echo -e "$output"|grep '^name:'|cut -f2 -d ':'|tail -c +2`
-RESOLVED_IP=`echo -e "$output"|grep '^ip_address:'|cut -f2 -d ':'|tail -c +2`
+RESOLVED_HOSTNAME=`echo -e "$output"|grep '^name:'|awk '{print $2}'`
+RESOLVED_IP=`echo -e "$output"|grep '^ip_address:'|awk '{print $2}'`
 
 function set_bg {
   osascript -e "tell application \"iTerm\"
