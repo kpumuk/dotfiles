@@ -25,7 +25,7 @@ IRB.conf[:PROMPT][:DOTFILES] = {
   :PROMPT_I => "\001\e[90m\002#{rvm_ruby_string}\001\e[0m\002\001\e[0;36m\002 >> \001\e[0m\002",
   :PROMPT_S => "\001\e[90m\002#{rvm_ruby_string}\001\e[0m\002\001\e[0;32m\002%l>> \001\e[0m\002",
   :PROMPT_C => "\001\e[90m\002#{rvm_ruby_string}\001\e[0m\002\001\e[0;36m\002 .. \001\e[0m\002",
-  :PROMPT_N => "\001\e[90m\002#{rvm_ruby_string}\001\e[0m\002\001\e[0;36m\002 ?.. \001\e[0m\002",
+  :PROMPT_N => "\001\e[90m\002#{rvm_ruby_string}\001\e[0m\002\001\e[0;36m\002?.. \001\e[0m\002",
   :RETURN   => "\e[1;31m\342\206\222\e[0m %s\n"
 }
 # Mac OS X uses editline instead of readline by default. It does not support invisible

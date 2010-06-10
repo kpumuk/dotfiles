@@ -1,10 +1,31 @@
 #!/bin/bash
 
-# SSH with host name and IP address in background
+# SSH with host name and IP address in background (only in iTerm.app)
+
+# First, check to see if we have the correct terminal!
+if [ "$(tty)" == 'not a tty' ] ; then
+  /usr/bin/ssh "$@"
+  exit $?
+fi
+
+function __calculate_iterm_window_dimensions {
+  local size=( $(osascript -e "tell application \"iTerm\"
+    get bounds of window 1
+  end tell" | tr ',' ' ') )
+
+  local x1=${size[0]} y1=${size[1]} x2=${size[2]} y2=${size[3]}
+  # 15px - scrollbar width
+  local w=$(( $x2 - $x1 - 15 ))
+  # 44px - titlebar + tabs height
+  local h=$(( $y2 - $y1 - 44))
+  echo "${w}x${h}"
+}
+
+# Console dimensions
+DIMENSIONS=$(__calculate_iterm_window_dimensions)
 
 BG_COLOR="#000000"       # Background color
 FG_COLOR="#662020"       # Foreground color
-DIMENSIONS="970x456"     # Console dimensions
 GRAVITY="NorthEast"      # Text gravity (NorthWest, North, NorthEast,
                          # West, Center, East, SouthWest, South, SouthEast)
 OFFSET1="20,10"          # Text offset
@@ -22,7 +43,7 @@ output=`dscacheutil -q host -a name $HOSTNAME`
 RESOLVED_HOSTNAME=`echo -e "$output"|grep '^name:'|cut -f2 -d ':'|tail -c +2`
 RESOLVED_IP=`echo -e "$output"|grep '^ip_address:'|cut -f2 -d ':'|tail -c +2`
 
-set_bg () {
+function set_bg {
   osascript -e "tell application \"iTerm\"
     set current_terminal to (current terminal)
     tell current_terminal
