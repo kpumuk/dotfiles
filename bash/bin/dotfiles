@@ -60,7 +60,7 @@ function _safe_execute {
     echo -e "$cmd"
     echo
     echo "Output:"
-    echo -e $output
+    echo -e "$output"
     [ "$critical" == "true" ] && exit $retval
   else
     _cecho_ok
