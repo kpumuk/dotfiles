@@ -71,7 +71,7 @@ trap on_exit EXIT
 
 convert \
   -size "$DIMENSIONS" xc:"$BG_COLOR" -gravity "$GRAVITY" -fill "$FG_COLOR" -font "$FONT" -style "$FONT_STYLE" -pointsize "$FONT_SIZE" -antialias -draw "text $OFFSET1 '${RESOLVED_HOSTNAME:-$HOSTNAME}'" \
-  -pointsize 30 -draw "text $OFFSET2 '${RESOLVED_IP:-}'" \
+  -pointsize 30 -draw "text $OFFSET2 '${RESOLVED_IP:-}'" -alpha Off \
   "/tmp/iTermBG.$$.png"
 set_bg "/tmp/iTermBG.$$.png"
 
