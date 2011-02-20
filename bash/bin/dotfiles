@@ -129,9 +129,9 @@ function _dotfiles_install_gems {
   echo 'Installing default gems'
 
   _safe_execute "Switching to @global gemset" \
-                "rvm gemset use @global"
+                "rvm gemset use @global --create"
 
-  for gem in awesome_print bundler looksee memcached mysql ruby-debug ruby-debug-ide; do
+  for gem in awesome_print bundler looksee memcached mysql ruby-debug ruby-debug-ide git_remote_branch; do
     _safe_execute "Installing gem: $gem" \
                   "gem install $gem --no-rdoc --no-ri" \
                   false
