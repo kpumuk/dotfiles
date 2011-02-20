@@ -34,4 +34,5 @@ for i in ~/.bash/bash_completion.d/*; do
   source $i
 done
 
-[ -d "$rvm_path" ] && source $rvm_scripts_path/completion
+[ -d "$rvm_path" ] && source $rvm_path/scripts/completion
+[ -s "$GOROOT/misc/bash/go" ] && source $GOROOT/misc/bash/go
