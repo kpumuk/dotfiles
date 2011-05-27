@@ -4,6 +4,8 @@ source $HOME/.bash/colors
 source $HOME/.bash/paths
 # Various system-wide environemnt variables
 source $HOME/.bash/config
+# Ruby Enterprise Edition GC tuning
+source $HOME/.bash/rubyee
 # Aliases
 source $HOME/.bash/aliases
 # Helpful functions
