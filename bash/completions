@@ -25,7 +25,7 @@ function _git_complete_aliases {
   _git
 }
 
-for cmd in 'ga gb gc gcb gd gci gca gl glr gm gmt gp'; do
+for cmd in 'ga gb gc gcb gd gdw gci gca gf gfr gl glr glp glo gm gmt gp gs gsf gss'; do
   complete -o bashdefault -o default -o nospace -F _git_complete_aliases $cmd 2>/dev/null \
     || complete -o default -o nospace -F _git_complete_aliases $cmd 2>/dev/null
 done
