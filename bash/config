@@ -3,12 +3,12 @@ export QTDIR=/opt/local/lib/qt3
 
 # Setup some environment variables
 export GREP_OPTIONS="--color=auto"
-export EDITOR="mate -w"
-export GEM_EDITOR=mate
+export EDITOR="subl -w"
+export GEM_EDITOR=subl
 
 # Go settings
 if [ -d "$HOMEBREW_HOME/Cellar/go" ]; then
-  export GOROOT=`brew --prefix go`
+  export GOROOT=$(cd /opt/homebrew/Library/LinkedKegs/go && pwd -P)
   export GOBIN=$GOROOT/bin
   export GOARCH=amd64
   export GOOS=darwin

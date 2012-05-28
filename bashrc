@@ -4,6 +4,8 @@ source $HOME/.bash/colors
 source $HOME/.bash/paths
 # Various system-wide environemnt variables
 source $HOME/.bash/config
+# Hadoop stuff
+source $HOME/.bash/hadoop
 # Ruby Enterprise Edition GC tuning
 source $HOME/.bash/rubyee
 # Aliases
@@ -19,3 +21,5 @@ source $HOME/.bash/prompt
 if [ -s "$HOME/.localrc" ]; then
   source $HOME/.localrc
 fi
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting

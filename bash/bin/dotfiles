@@ -105,7 +105,7 @@ function _dotfiles_install_homebrew {
 
     _safe_execute "Running Homebrew install scripts" \
                   "curl -Lsf http://github.com/mxcl/homebrew/tarball/master |
-                   tar xvz "-C$dir" --strip 1"
+                   tar xvz '-C$dir' --strip 1"
   fi
 
   _dotfiles_install_formulas "$dir"

@@ -15,23 +15,27 @@ alias sg="script/generate"
 alias tlog="tail -f log/development.log"
 alias migrate='rake db:migrate && rake db:migrate RAILS_ENV=test'
 alias rst='touch tmp/restart.txt'
-alias s="script/spec -c spec"
 
 # other
 alias b="bundle exec"
 alias bi="bundle install"
 alias bu="bundle update"
 alias m="mate ."
+alias s="subl ."
 alias httpdump='sudo tcpdump -i en1 -n -s 0 -w - | grep -a -o -E "Host\: .*|GET \/.*"'
-alias memflush='echo flush_all | nc localhost 11211'
-alias ann='annotate -p before -i -e tests,fixtures'
+alias memflush="echo flush_all | nc localhost 11211"
+alias ann="annotate -p before -i -e tests,fixtures"
+alias please="sudo"
 
 # Some Git aliases
 alias ga="git add"
 alias gb="git branch"
+alias gba="git branch --all"
+alias gbr="git branch --remote"
 alias gc="git checkout"
 alias gcb="git checkout -b"
 alias gd="git diff"
+alias gdc="git diff --cached"
 alias gdw="git diff --word-diff"
 alias gci="git commit"
 alias gca="git commit -a"
@@ -39,7 +43,9 @@ alias gf="git fetch"
 alias gfr="git fetch && git rebase"
 alias gg='git log --graph --pretty=format:"%Cred%h%Creset — %s %Cgreen(%cr)%Creset" --abbrev-commit --date=relative'
 alias gl="git pull"
+alias glq="git pull --quiet"
 alias glr="git pull --rebase"
+alias glrq="git pull --rebase --quiet"
 alias glp="git log --patch"
 alias glo="git log --oneline --decorate"
 alias gm="git merge --no-ff"

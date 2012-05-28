@@ -40,7 +40,7 @@ if Readline::VERSION == 'EditLine wrapper'
   puts "\e[31mWARNING\e[0m: You ruby built with \e[35meditline\e[0m, instead of \e[35mreadline\e[0m, so it does not support" +
     "Unicode and ANSI chars in prompt.\n" +
     "Please re-build your Ruby with readline support (see http://bit.ly/dxQmvQ for details):
-    \e[90mrvm install ree -C --with-readline-dir=/opt/homebrew/Cellar/readline/6.0\e[0m"
+    \e[90mrvm install ree -C --with-readline-dir=`brew --prefix readline`\e[0m"
   IRB.conf[:PROMPT][:DOTFILES].each do |k, v|
     IRB.conf[:PROMPT][:DOTFILES][k] = v.gsub(%r{\001[^\002]*\002}, '')
   end
@@ -61,13 +61,6 @@ begin
   end
 rescue LoadError
   puts 'AwesomePrint gem not available: `gem install awesome_print`'
-end
-
-# Looksee gem
-begin
-  require 'looksee'
-rescue LoadError
-  puts 'Looksee gem not available: `gem install looksee`'
 end
 
 # Easily print methods local to an object's class

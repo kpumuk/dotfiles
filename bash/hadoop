@@ -1,0 +1,16 @@
+export HADOOP_HOME=`brew --prefix hadoop`/libexec
+export HADOOP_CONF_DIR=$HOMEBREW_HOME/etc/hadoop
+
+export ZOOCFGDIR=$HOMEBREW_HOME/etc/zookeeper
+
+export HBASE_HOME=`brew --prefix hbase`/libexec
+export HBASE_CONF_DIR=$HOMEBREW_HOME/etc/hbase
+
+export HIVE_HOME=`brew --prefix hive`/libexec
+export HIVE_CONF_DIR=$HOMEBREW_HOME/etc/hive
+
+export SQOOP_HOME=`brew --prefix sqoop`/libexec
+export SQOOP_CONF_DIR=$HOMEBREW_HOME/etc/sqoop
+
+export OOZIE_HOME=`brew --prefix oozie`/libexec
+export OOZIE_CONFIG=$HOMEBREW_HOME/etc/oozie
