@@ -15,7 +15,7 @@ if [ -d "$HOMEBREW_HOME/Cellar/go" ]; then
 fi
 
 # Curl certificates
-export CURL_CA_BUNDLE=/usr/local/share/curl/cacert.pem
+export CURL_CA_BUNDLE=/usr/local/share/ca-bundle.crt
 
 # Some Java variables
 export JAVA_HOME=`/usr/libexec/java_home`
