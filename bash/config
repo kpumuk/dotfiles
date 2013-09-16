@@ -14,6 +14,9 @@ if [ -d "$HOMEBREW_HOME/Cellar/go" ]; then
   export GOOS=darwin
 fi
 
+# Curl certificates
+export CURL_CA_BUNDLE=/usr/local/share/curl/cacert.pem
+
 # Some Java variables
 export JAVA_HOME=`/usr/libexec/java_home`
 # export ANT_HOME='/Developer/Java/ant'
