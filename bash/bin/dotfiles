@@ -92,7 +92,7 @@ function _dotfiles_install_rvm {
 }
 
 function _dotfiles_install_homebrew {
-  local dir=${1:-${HOMEBREW_HOME:-/opt/homebrew}}
+  local dir=${1:-${HOMEBREW_HOME:-/usr/local}}
 
   echo "Installing homebrew to ${dir}"
 
@@ -114,7 +114,7 @@ function _dotfiles_install_homebrew {
 }
 
 function _dotfiles_install_formulas {
-  local dir=${1:-${HOMEBREW_HOME:-/opt/homebrew}}
+  local dir=${1:-${HOMEBREW_HOME:-/usr/local}}
 
   echo 'Installing default Homebrew formulas'
 
@@ -181,7 +181,7 @@ function _dotfiles_install_passenger {
 
 function _help_summary {
   echo "Tasks:"
-  echo "  dotfiles install homebrew [DEST]  # Install Homebrew to the specified folder (/opt/homebrew by default)"
+  echo "  dotfiles install homebrew [DEST]  # Install Homebrew to the specified folder (/usr/local by default)"
   echo "  dotfiles install formulas         # Install needed formulas"
   echo "  dotfiles install rvm              # Install RVM and some gems"
   echo "  dotfiles install gems             # Install default gems"
@@ -194,7 +194,7 @@ function _help_install {
   echo "Usage:"
   echo "  dotfiles install homebrew [DEST]"
   echo
-  echo "Install Homebrew to the specified folder (by default /opt/homebrew)."
+  echo "Install Homebrew to the specified folder (by default /usr/local)."
   echo "After that it installs some formulas (see 'dotfiles install formulas')."
   echo '-----'
   echo

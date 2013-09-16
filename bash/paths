@@ -1,12 +1,12 @@
-HOMEBREW_HOME=/opt/homebrew
-[[ ! -x "$HOMEBREW_HOME/bin/brew" ]] && HOMEBREW_HOME=/usr/local
+HOMEBREW_HOME=/usr/local
+[[ ! -x "$HOMEBREW_HOME/bin/brew" ]] && HOMEBREW_HOME=/opt/homebrew
 [[ ! -x "$HOMEBREW_HOME/bin/brew" ]] && HOMEBREW_HOME=/opt/local
 [[ ! -x "$HOMEBREW_HOME/bin/brew" ]] && HOMEBREW_HOME=
 
 if [ -n "$HOMEBREW_HOME" ]; then
   _brew_cellar_dir=
   function _brew_cellar_dir_for {
-    local dir=$(dirname `readlink /opt/homebrew/bin/$1` 2>/dev/null)
+    local dir=$(dirname `readlink /usr/local/bin/$1` 2>/dev/null)
     if [ "$?" -eq 0 ]; then
       _brew_cellar_dir=${dir/#../$HOMEBREW_HOME}
       _brew_cellar_dir=${_brew_cellar_dir/%bin/}
