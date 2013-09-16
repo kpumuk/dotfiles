@@ -15,9 +15,8 @@ if [ -d "$HOMEBREW_HOME/Cellar/go" ]; then
 fi
 
 # Some Java variables
-# export JAVA_HOME='/System/Library/Frameworks/JavaVM.framework/Home'
+export JAVA_HOME=`/usr/libexec/java_home`
 # export ANT_HOME='/Developer/Java/ant'
-export JAVA_HOME="/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Home/"
 
 # RVM scripts
 [[ -s $HOME/.rvm/scripts/rvm ]] && source $HOME/.rvm/scripts/rvm
