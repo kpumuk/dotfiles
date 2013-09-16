@@ -107,6 +107,10 @@ function _dotfiles_install_homebrew {
                   "ruby -e '$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)'"
   fi
 
+  _safe_execute "Adding Homebrew-dupes" \
+                "$dir/bin/brew tap homebrew/homebrew-dupes" \
+                false
+
   _dotfiles_install_formulas "$dir"
 
   echo 'Homebrew installed successully, please restart your console'
@@ -117,7 +121,7 @@ function _dotfiles_install_formulas {
 
   echo 'Installing default Homebrew formulas'
 
-  for formula in readline git bash bash-completion ack wget; do
+  for formula in readline git bash bash-completion ack wget apple-gcc42 imagemagick; do
     _safe_execute "Installing formula: $formula" \
                   "$dir/bin/brew install $formula" \
                   false
