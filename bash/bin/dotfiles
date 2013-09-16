@@ -128,6 +128,9 @@ function _dotfiles_install_formulas {
   _safe_execute "Linking curl formula" \
                 "$dir/bin/brew link curl --force" \
                 false
+  _safe_execute "Configuring git to use curl certificates" \
+                "git config --system http.sslcainfo /usr/local/share/ca-bundle.crt" \
+                false
 
   echo 'Installing default Homebrew formulas'
 
