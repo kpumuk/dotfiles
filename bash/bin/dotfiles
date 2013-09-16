@@ -104,8 +104,7 @@ function _dotfiles_install_homebrew {
                   "sudo chown -R $USER '$dir'"
 
     _safe_execute "Running Homebrew install scripts" \
-                  "curl -Lsf http://github.com/mxcl/homebrew/tarball/master |
-                   tar xvz '-C$dir' --strip 1"
+                  "ruby -e '$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)'"
   fi
 
   _dotfiles_install_formulas "$dir"
