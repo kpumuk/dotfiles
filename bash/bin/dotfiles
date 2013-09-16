@@ -123,6 +123,15 @@ function _dotfiles_install_formulas {
                   "$dir/bin/brew install $formula" \
                   false
   done
+
+  _safe_execute "Installing formula: $formula" \
+                "$dir/bin/brew install curl --with-libssh2 --with-ssl" \
+                false
+  _safe_execute "Linking curl formula" \
+                "$dir/bin/brew link curl --force" \
+                false
+  _safe_execute "Downloading root certificates for curl" \
+                "mkdir -p $dir/share/curl && $dir/bin/curl -s -o $dir/share/curl/cacert.pem http://curl.haxx.se/ca/cacert.pem"
 }
 
 function _dotfiles_install_gems {
