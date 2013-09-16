@@ -11,6 +11,3 @@ export HIVE_CONF_DIR=$HOMEBREW_HOME/etc/hive
 
 export SQOOP_HOME=`brew --prefix sqoop`/libexec
 export SQOOP_CONF_DIR=$HOMEBREW_HOME/etc/sqoop
-
-export OOZIE_HOME=`brew --prefix oozie`/libexec
-export OOZIE_CONFIG=$HOMEBREW_HOME/etc/oozie
