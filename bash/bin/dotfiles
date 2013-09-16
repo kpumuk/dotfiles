@@ -75,16 +75,16 @@ function _dotfiles_install_rvm {
   echo 'Installing RVM'
 
   _safe_execute "Running RVM install scripts" \
-                "bash < <( curl http://rvm.beginrescueend.com/releases/rvm-install-head )"
+                "curl -L https://get.rvm.io | bash -s stable --autolibs=homebrew"
 
   _safe_execute "Configuring system" \
-                "source $HOME/.rvm/scripts/rvm"
+                "source $HOME/.rvm/scripts/rvm && rvm reload"
 
-  _safe_execute "Installing Ruby Enterprise Edition (REE)" \
-                "rvm install ree"
+  _safe_execute "Installing Ruby 2.0" \
+                "rvm install 2.0.0"
 
   _safe_execute "Configuring REE as as system default Ruby" \
-                "rvm use ree --default"
+                "rvm use 2.0.0 --default"
 
   _dotfiles_install_gems
 
@@ -139,7 +139,7 @@ function _dotfiles_install_gems {
   _safe_execute "Switching to @global gemset" \
                 "rvm gemset use @global --create"
 
-  for gem in awesome_print bundler looksee memcached mysql ruby-debug ruby-debug-ide git_remote_branch; do
+  for gem in awesome_print bundler memcached mysql2 git_remote_branch; do
     _safe_execute "Installing gem: $gem" \
                   "gem install $gem --no-rdoc --no-ri" \
                   false
