@@ -25,7 +25,7 @@ function __calculate_iterm_window_dimensions {
 DIMENSIONS=$(__calculate_iterm_window_dimensions)
 
 BG_COLOR="#000000"       # Background color
-FG_COLOR="#C62020"       # Foreground color
+FG_COLOR="#C68080"       # Foreground color
 GRAVITY="NorthEast"      # Text gravity (NorthWest, North, NorthEast,
                          # West, Center, East, SouthWest, South, SouthEast)
 OFFSET1="20,10"          # Text offset
