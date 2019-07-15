@@ -15,9 +15,4 @@ source $HOME/.bash/completions
 # Bash prompt tuning
 source $HOME/.bash/prompt
 
-# Machine specific settings
-if [ -s "$HOME/.localrc" ]; then
-  source $HOME/.localrc
-fi
-
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting
