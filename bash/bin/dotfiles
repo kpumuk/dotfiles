@@ -119,26 +119,17 @@ function _dotfiles_install_homebrew {
 function _dotfiles_install_formulas {
   local dir=${1:-${HOMEBREW_HOME:-/usr/local}}
 
-  echo 'Installing Curl'
-
-  _safe_execute "Installing formula: curl-ca-bundle"
-  _safe_execute "Installing formula: curl" \
-                "CURL_CA_BUNDLE=$dir/share/ca-bundle.crt $dir/bin/brew install curl --with-ssh --with-ssl" \
-                false
-  _safe_execute "Linking curl formula" \
-                "$dir/bin/brew link curl --force" \
-                false
-  _safe_execute "Configuring git to use curl certificates" \
-                "git config --system http.sslcainfo /usr/local/share/ca-bundle.crt" \
-                false
-
   echo 'Installing default Homebrew formulas'
 
-  for formula in readline git bash bash-completion ack wget apple-gcc42 imagemagick; do
+  for formula in curl readline git bash bash-completion ack wget apple-gcc42 imagemagick; do
     _safe_execute "Installing formula: $formula" \
                   "$dir/bin/brew install $formula" \
                   false
   done
+
+  _safe_execute "Linking curl formula" \
+                "$dir/bin/brew link curl --force" \
+                false
 }
 
 function _dotfiles_install_gems {
