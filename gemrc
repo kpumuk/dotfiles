@@ -2,9 +2,8 @@
 :update_sources: true
 :bulk_threshold: 1000
 gem: --no-rdoc --no-ri
-:sources: 
-- http://gems.github.com
-- http://rubygems.org
+:sources:
+- https://rubygems.org
 :backtrace: false
 :verbose: true
 :benchmark: false
