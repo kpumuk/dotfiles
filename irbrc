@@ -66,7 +66,7 @@ end
 # Easily print methods local to an object's class
 module ObjectLocalMethods
   def local_methods(include_superclasses = true)
-    (self.methods - (include_superclasses ? Object.methods : obj.class.superclass.instance_methods)).sort
+    (self.methods - (include_superclasses ? Object.methods : self.class.superclass.instance_methods)).sort
   end
 end
 Object.send(:extend,  ObjectLocalMethods)
